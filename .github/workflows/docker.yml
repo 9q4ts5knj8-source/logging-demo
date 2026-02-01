@@ -1,4 +1,4 @@
-name: Build Docker Image
+name: Build & Push Docker Image
 
 on:
   push:
@@ -11,5 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build docker image
-        run: docker build -t logging-demo .
+      # 🔐 login to docker hub
+      - name: Login to Docker Hub
+        run: |
+          docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+
+      # 🐳 build image
+      - name: Build image
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/logging-demo:latest .
+
+      # 🚀 push image
+      - name: Push image
+        run: |
+          docker push ${{ secrets.DOCKER_USERNAME }}/logging-demo:latest
